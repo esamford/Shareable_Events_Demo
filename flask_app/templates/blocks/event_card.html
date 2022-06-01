@@ -1,0 +1,154 @@
+<div class="event-card col card border border-dark p-2 mb-4 media-print-add-border media-print-no-page-break">
+    <div class="card-title text-center my-1">
+        <h1 class="mb-0">{{ event.name }}</h1>
+        {% with author = event.get_author_user() %}
+        {% if author %}
+        <div>
+            <small>Created by {{ author.first_name }} {{ author.last_name }}</small>
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% if event.canceled == 1 %}
+        <div>
+            <small class="text-danger">Canceled</small>
+        </div>
+        {% endif %}
+    </div>
+
+    <hr class="my-2 mx-1 media-print-d-none">
+    <div class="card-body">
+        <div class="contianer row justify-content-between">
+            <!-- Event times -->
+            <div class="mb-4 col media-print-no-page-break">
+                <p class="mb-0 lead">Time:</p>
+                <div class="event-info-indent">
+                    <p class="mb-0">
+                        Starts on <span class="js_convert_utc_to_local">{{ event.start_time }}</span> your local time.
+                    </p>
+                    <p class="mb-0">
+                        Ends on </span><span class="js_convert_utc_to_local">{{ event.end_time }}</span> your local time.
+                    </p>
+                    {% if event_duration_string %}
+                    <p class="mb-0">
+                        This is scheduled to last for {{ event_duration_string }}.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="w-100 d-lg-none"></div>
+
+            <!-- Event description -->
+            <div class="mb-4 col">
+                <p class="mb-0 lead">Description:</p>
+                <div class="event-info-indent">
+                    <p class="mb-0 whitespace-pre-wrap">{{ event.description }}</p>
+                </div>
+            </div>
+            {% with event_location = event.get_event_location() %}
+
+            <div class="w-100"></div>
+
+            {% if event_location %}
+            <!-- Event location -->
+            <div class="mb-4 col media-print-no-page-break">
+                <p class="mb-0 lead">Located At:</p>
+                <div class="event-info-indent">
+                    <p class="mb-0">{{ event_location.street }}</p>
+                    <p class="mb-0">{{ event_location.city }}, {{ event_location.state }}, {{ event_location.postal_code }}</p>
+                    <p class="mb-0">{{ event_location.country }}</p>
+                </div>
+            </div>
+
+            <div class="w-100 d-lg-none"></div>
+
+            {% if event_location.display_notes() %}
+            <div class="mb-4 col">
+                <p class="mb-0 lead">Location Notes:</p>
+                <div class="event-info-indent">
+                    <p class="mb-0 whitespace-pre-wrap">{{ event_location.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="w-100"></div>
+
+            {% if event.show_private_key() %}
+            {% with private_event = event.get_private_event() %}
+            {% if private_event %}
+            <!-- Private key -->
+            <div class="mb-4 col media-print-no-page-break">
+                <p class="mb-2 lead">Secret Key:</p>
+                <div class="ms-3 d-flex align-items-center">
+                    <button class="btn btn-info me-4" onclick="copy_to_clipboard('{{ private_event.secret_key }}')">
+                    Copy {% include 'blocks/svg/clipboard.html' %}
+                    </button>
+                    <p class="mb-0">"<span class="">{{ private_event.secret_key }}</span>"</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+
+            {% if event.get_attendees()|length > 0 %}
+            {% if shorten_attendees %}
+            <div class="mb-4 col">
+                <p class="mb-2 lead">
+                    Number of Attendees: {{ event.get_attendees()|length }} {% if 'user_id' in session and event.user_is_attending(session['user_id']) %}<span class="">(including you)</span>{% endif %}
+                </p>
+            </div>
+            {% else %}
+            <hr class="my-2 media-print-d-none">
+            <div class="mb-1 col-12">
+                <p class="mt-2 mb-3 lead text-center">Attendees</p>
+                <div class="container row mx-auto">
+                    {% for attendee in event.get_attendees() %}
+                    <div class="col text-center">
+                        {% with event_author = event.get_author_user() %}
+                        {% with attendee_user = attendee.get_user_if_exists() %}
+
+                        {% if attendee_user and 'user_id' in session and attendee_user.id == session['user_id'] %}
+                        <p class="text-decoration-underline">{{ attendee.first_name }} {{ attendee.last_name }}</p>
+                        {% elif event_author and 'user_id' in session and event_author.id == session['user_id'] %}
+                        <p>
+                            <a class="text-muted me-1" href="/attendance/remove_attendee/{{ event.share_key }}/{{ attendee.id }}/">
+                                {% include 'blocks/svg/x_circle.html' %}
+                            </a>
+                            {{ attendee.first_name }} {{ attendee.last_name }}
+                        </p>
+                        {% else %}
+                        <p>{{ attendee.first_name }} {{ attendee.last_name }}</p>
+                        {% endif %}
+
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+
+
+            <div class="w-100"></div>
+
+            {% if show_view_button %}
+            <div class="col mx-2">
+                <div class="d-grid gap-2 mt-2">
+                    <a href="/events/view/{{ event.share_key }}/" class="btn btn-primary">View Event</a>
+                </div>
+            </div>
+            {% endif %}
+            <div class="w-100 d-lg-none"></div>
+            {% if event.can_be_edited() %}
+            <div class="col mx-2">
+                <div class="d-grid gap-2 mt-2">
+                    <a href="/events/edit/{{ event.share_key }}/" class="btn btn-secondary js_enable_with_js disabled">Edit Event</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

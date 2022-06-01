@@ -1,0 +1,286 @@
+{% extends 'blocks/base.html' %}
+
+
+{% if not event.canceled and passed_secret_key_check %}
+{% block title %}Shareable Events - {{ event.name }}{% endblock title %}
+
+{% block header_ad_script %}
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8705553391670176"
+crossorigin="anonymous"></script>
+{% endblock header_ad_script %}
+
+{% endif %}
+
+{% block content %}
+{% if event.canceled %}
+<div class="col card border border-dark p-2 mb-3">
+    <h4 class="card-title text-center">Canceled Event</h4>
+    <div class="card-body">
+        <p>The event you are attempting to view has been canceled and can no longer be accessed.</p>
+        <div class="d-grid gap-2 mt-2">
+            <a href="/events/create/" class="btn btn-primary">Create a new one!</a>
+        </div>
+        {% if user_created_event %}
+        <div class="d-grid gap-2 mt-4">
+            <a href="/events/uncancel/{{ event.share_key }}/" class="btn btn-danger">Uncancel event</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% elif not passed_secret_key_check %}
+<div class="col card border border-dark p-2 mb-3">
+    <h4 class="card-title text-center">Private Event</h4>
+    <div class="card-body">
+        <p>The event you are attempting to view is private. Please provide the event's secret key to continue.</p>
+        <form action="/events/view/{{ event.share_key }}/" method="get">
+            {% include 'blocks/form_flash_messages.html' %}
+            <div class="mb-3 form-outline">
+                <input id="event_secret_key" class="form-control" type="text" name="secret_key" required>
+                <label class="form-label" for="event_secret_key">Secret key</label>
+            </div>
+            {% include 'blocks/form_inputs/submit_button.html' %}
+        </form>
+    </div>
+</div>
+{% else %}
+
+<!-- Tabs navs -->
+<ul class="nav nav-tabs nav-justified mb-3 media-print-d-none" id="event_tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="
+        nav-link
+        {% if active_tab == 0 %}
+        active
+        {% endif %}
+        " id="tab_event_info" data-mdb-toggle="tab" href="#tab_content_event_info" role="tab" aria-controls="tab_content_event_info" aria-selected="true">Event</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="
+        nav-link
+        {% if active_tab == 1 %}
+        active
+        {% endif %}
+        " id="tab_event_comments" data-mdb-toggle="tab" href="#tab_content_event_comments" role="tab" aria-controls="tab_content_event_comments" aria-selected="true" onclick="remove_duplicate_form_counters_after_delay(1000)">Comments</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="
+        nav-link
+        {% if active_tab == 2 %}
+        active
+        {% endif %}
+        " id="tab_other" data-mdb-toggle="tab" href="#tab_content_other" role="tab" aria-controls="tab_content_other" aria-selected="false">Other</a>
+    </li>
+</ul>
+<!-- Tabs navs -->
+
+<!-- Tabs content -->
+<div class="tab-content" id="event_tab_contents">
+    <div class="tab-pane fade
+    {% if active_tab == 0 %}
+    show active
+    {% endif %}
+    " id="tab_content_event_info" role="tabpanel" aria-labelledby="tab_event_info">
+        <!-- Event information -->
+        {% include 'blocks/event_card.html' %}
+
+        <!-- Attendee signup -->
+        {% if not event.event_has_ended() %}
+        <div class="media-print-d-none">
+            {% if logged_in_user %}
+            <div id="attendee_signup" class="col card border border-dark p-2 mb-3">
+                <h4 class="card-title text-center">
+                    {% if logged_in_user.is_attending_event_with_id(event.id) %}
+                    Cancel Attendance
+                    {% else %}
+                    Attend Event
+                    {% endif %}
+                </h4>
+                <div class="card-body">
+                    {% if logged_in_user.is_attending_event_with_id(event.id) %}
+                    <form action="/attendance/users/{{ event.share_key }}/" method="post">
+                        <input type="text" name="attend_event" value="false" hidden>
+                        <p>You are currently planning on attending this event. Would you like to cancel?</p>
+                        <div class="d-grid gap-2 mt-2">
+                            <button class="btn btn-primary" type="submit">I do not plan on attending</button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <form action="/attendance/users/{{ event.share_key }}/" method="post">
+                        <input type="text" name="attend_event" value="true" hidden>
+                        <p>You are not currently planning on attending this event. Would you like to?</p>
+                        <div class="d-grid gap-2 mt-2">
+                            <button class="btn btn-primary" type="submit">I plan on attending</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div id="attendee_signup" class="col card border border-dark p-2 mb-3">
+                <h4 class="card-title text-center">Change Attendance Status</h4>
+                <div class="card-body">
+                    <form action="/attendance/unknown_user/{{ event.share_key }}/" method="post">
+                        <input type="hidden" name="form_name" value="attendee_signup" hidden>
+                        {% if form_data and 'form_name' in form_data and form_data['form_name'] == "attendee_signup" %}
+                        {% include 'blocks/form_flash_messages.html' %}
+                        {% endif %}
+                        <div class="mb-4">
+                            <!-- Default radio -->
+                            <div class="form-check mb-2">
+                                <input id="attend_event_signup" class="form-check-input" type="radio" name="attend_event" value="true"
+                                {% if form_data %}
+                                    {% if form_data['attend_event'] == 'true' %}
+                                    checked
+                                    {% endif %}
+                                {% else %}
+                                checked
+                                {% endif %}
+                                >
+                                <label class="form-check-label" for="attend_event_signup">Sign up for event</label>
+                            </div>
+                            <!-- Default checked radio -->
+                            <div class="form-check">
+                                <input  id="attend_event_cancel" class="form-check-input" type="radio" name="attend_event" value="false"
+                                {% if form_data %}
+                                    {% if form_data['attend_event'] == 'false' %}
+                                    checked
+                                    {% endif %}
+                                {% endif %}
+                                >
+                                <label class="form-check-label" for="attend_event_cancel">Cancel attendance for event</label>
+                            </div>
+                        </div>
+                        <div class="mb-4 form-outline">
+                            <input id="attendee_first_name" class="form-control" type="text" name="first_name" value="{% if form_data %}{{ form_data['first_name'] }}{% endif %}" required>
+                            <label class="form-label" for="attendee_first_name">First name</label>
+                        </div>
+                        <div class="mb-4 form-outline">
+                            <input id="attendee_last_name" class="form-control" type="text" name="last_name" value="{% if form_data %}{{ form_data['last_name'] }}{% endif %}" required>
+                            <label class="form-label" for="attendee_last_name">Last name</label>
+                        </div>
+                        <div class="mb-4 form-outline">
+                            <input id="attendee_password" class="form-control" type="password" name="password" value="" required>
+                            <label class="form-label" for="attendee_password">Password</label>
+                        </div>
+                        {% include 'blocks/form_inputs/submit_button.html' %}
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+    <div class="tab-pane fade
+    {% if active_tab == 1 %}
+    show active
+    {% endif %}
+    " id="tab_content_event_comments" role="tabpanel" aria-labelledby="tab_event_comments">
+        {% if 'user_id' in session %}
+        <div id="comment_form" class="col card border border-dark p-2 mb-4 media-print-d-none">
+            <h4 class="card-title text-center">Add Comment</h4>
+            <div class="card-body">
+                <form action="/event_comments/post/{{ event.share_key }}/" method="post">
+                    <input type="hidden" name="form_name" value="add_comment" hidden>
+                    {% if form_data and 'form_name' in form_data and form_data['form_name'] == "add_comment" %}
+                    {% include 'blocks/form_flash_messages.html' %}
+                    {% endif %}
+                    <div class="mb-4 form-outline">
+                        <textarea id="event_comment" class="form-control" type="text" name="comment" rows="3" data-mdb-showcounter="true" maxlength="500" required></textarea>
+                        <label class="form-label" for="event_comment">Comment</label>
+                        <div class="form-helper"></div>
+                    </div>
+                    {% include 'blocks/form_inputs/submit_button.html' %}
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div id="login_to_comment" class="col card border border-dark p-2 mb-4 media-print-d-none">
+            <h4 class="card-title text-center">Log In To Add a Comment</h4>
+            <div class="card-body">
+                <p>Users must be logged in to post comments.</p>
+                <div class="d-grid gap-2 mt-2">
+                    <a class="btn btn-primary js_enable_with_js disabled" href="/login/">Login</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if event.get_event_comments()|length > 0 %}
+            <div class="text-center mb-3">
+                <h2 class="text-center my-0">Comments</h2>
+                <small class="my-0">{{ event.name }}</small>
+            </div>
+            {% for comment in event.get_event_comments() %}
+                {% with poster = comment.get_user() %}
+                <div class="col card border border-dark p-4 mb-3 whitespace-pre-wrap media-print-add-border media-print-no-page-break">
+                    <div class="d-flex">
+                        <p class="lead mb-0">{{ poster.first_name }} {{ poster.last_name }}</p>
+                        {% if 'user_id' in session and session['user_id'] == poster.id %}
+                        <a class="text-muted ms-auto media-print-d-none" href="/event_comments/delete/{{ comment.id }}/">{% include 'blocks/svg/x_circle.html' %}</a>
+                        {% endif %}
+                    </div>
+
+                    {% if comment.created_at < comment.updated_at %}
+                    <p class="mb-3 small"><span class="js_convert_utc_to_local">{{ comment.created_at.date() }}</span> (edited on <span class="js_convert_utc_to_local">{{ comment.updated_at }}</span>)</p>
+                    {% else %}
+                    <p class="mb-3 small"><span class="js_convert_utc_to_local">{{ comment.created_at }}</span></p>
+                    {% endif %}
+                    <p class="mb-0">{{ comment.comment }}</p>
+                </div>
+                {% endwith %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="tab-pane fade
+    {% if active_tab == 2 %}
+    show active
+    {% endif %}
+    " id="tab_content_other" role="tabpanel" aria-labelledby="tab_other">
+        <!-- Share link -->
+        <div id="share_event" class="col card border border-dark p-2 mb-3">
+            <h4 class="card-title text-center">Share Event</h4>
+            <div class="card-body">
+                {% if event.get_private_event() is not none %}
+                <p>You can share this event with other people by sending them a link. Click the button below to copy it to your clipboard. Don't forget to tell them the event's secret key!</p>
+                {% else %}
+                <p>You can share this event with other people by sending them a link. Click the button below to copy it to your clipboard.</p>
+                {% endif %}
+                <div class="d-grid gap-2 mt-2">
+                    <button class="btn btn-primary js_enable_with_js disabled" onclick="copy_to_clipboard('{{ event_url }}')">
+                        Copy event link <span class="ms-2">{% include 'blocks/svg/clipboard.html' %}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancel event (for creator only) -->
+        {% if event.show_cancel_button() %}
+        <div id="cancel_event" class="col card border border-dark p-2 mb-3">
+            <h4 class="card-title text-center">Cancel Event</h4>
+            <div class="card-body">
+                <form action="/events/cancel/{{ event.share_key }}/" method="post">
+                    <p>If you would like to cancel this event, type "<span class="text-danger fw-bold">{{ event.name }}</span>" in the text box below and click "Cancel." People will see that the event used to exist and that it was canceled, but the event will otherwise be inaccessible unless you choose to uncancel it.</p>
+                    <input type="hidden" name="form_name" value="cancel_event" hidden>
+                    {% if form_data and 'form_name' in form_data and form_data['form_name'] == "cancel_event" %}
+                    {% include 'blocks/form_flash_messages.html' %}
+                    {% endif %}
+                    <div class="mb-3 form-outline">
+                        <input id="event_cancel_name" class="form-control" type="text" name="name" required>
+                        <label class="form-label" for="event_cancel_name">Name</label>
+                    </div>
+                    <div class="d-grid gap-2 mt-2">
+                        <button class="btn btn-danger js_enable_with_js disabled" type="submit">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- Tabs content -->
+
+{% endif %}
+{% endblock content %}
+

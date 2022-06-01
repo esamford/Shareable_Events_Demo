@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Shareable Events{% endblock title %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icons/calendar-week.svg') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Schedule events for any occasion! Share them with friends and coworkers to make coordination a breeze. Work across multiple time zones without confusion.">
+    <meta name="keywords" content="Shareable Events, schedule event, event, cross-timezone event">
+
+    <!--
+        Material Design for Bootstrap
+        https://mdbootstrap.com/
+    -->
+    {% if 'dark_theme' in session %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='mdb-bootstrap-5-main/css/mdb.dark.min.css') }}">
+    {% else %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='mdb-bootstrap-5-main/css/mdb.min.css') }}">
+    {% endif %}
+    <script src="{{ url_for('static', filename='mdb-bootstrap-5-main/js/mdb.min.js') }}" defer></script>
+
+    <!--
+        Open Sans font (web font)
+        https://fonts.google.com/specimen/Open+Sans
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
+
+    <!--
+        Roboto Slab font (for @media print)
+        https://fonts.google.com/specimen/Roboto+Slab#standard-styles
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DZZ348K4B2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DZZ348K4B2');
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+    <!-- JS Imports -->
+    <script src="{{ url_for('static', filename='js/imports/timezone_offset.js') }}" defer></script>
+
+    <!-- JS Initial Loading -->
+    <script src="{{ url_for('static', filename='js/loading/show_alert.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/loading/convert_utc_to_local.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/loading/fix_form_helper.js') }}" defer></script>
+
+    <!-- JS Forms -->
+    <script src="{{ url_for('static', filename='js/form_validation/numbers.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/forms/enable_input_group_from_checkbox.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/forms/add_timezone_offset.js') }}" defer></script>
+
+    <!-- JS Misc -->
+    <script src="{{ url_for('static', filename='js/copy_to_clipboard.js') }}" defer></script>
+
+    {% block header_ad_script %}
+    {% endblock header_ad_script %}
+
+    {% block header_access_1 %}{% endblock header_access_1 %}
+    {% block header_access_2 %}{% endblock header_access_2 %}
+    {% block header_access_3 %}{% endblock header_access_3 %}
+    {% block header_access_4 %}{% endblock header_access_4 %}
+    {% block header_access_5 %}{% endblock header_access_5 %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navbar -->
+    <div id="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top media-print-d-none" role="navigation">
+        <div class="container-fluid">
+            <a href="/" class="nav-link navbar-brand p-0">
+                <h1 class="navbar-brand m-0">Shareable Events</h1>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                {% include 'blocks/svg/list.html' %}
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if 'user_id' in session %}
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/dashboard/">Dashboard</a>
+                    </li>
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/account_settings/">Account Settings</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/login/">Log In</a>
+                    </li>
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/register/">Sign Up</a>
+                    </li>
+                    {% endif %}
+
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/events/create/">
+                            Create Event <span class="ms-1">{% include 'blocks/svg/calendar_event.html' %}</span>
+                        </a>
+                    </li>
+
+                    {% if 'user_id' in session %}
+                    <li>
+                        <a class="nav-link me-2" href="/logout/">Log Out</a>
+                    </li>
+                    {% endif %}
+
+                    {% if 'dark_theme' in session %}
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/themes/light/">Light Theme</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a class="nav-link me-2 js_enable_with_js disabled" href="/themes/dark/">Dark Theme</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if 'alert' in session %}
+    {% with alert = session.pop('alert') %}
+    <!-- Alerts -->
+    <div id="alert_modal" class="modal fade" tabindex="-1" aria-labelledby="alert_title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="alert_title">{{ alert[0] }}</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for paragraph in alert[1] %}
+                <p>{{ paragraph }}</p>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    {% endwith %}
+    {% endif %}
+
+    {% if advertisements and advertisements|length >= 1 %}
+    <div id="header_ad_container" class="mb-2 container-fluid">
+        <div class="row justify-content-center">
+            <div class="col d-flex justify-content-center">
+                {% with ad_html = advertisements[0] %}
+                {{ ad_html|safe }}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main content -->
+    <div id="main-content" class="container-fluid p-3">
+        {% block content %}{% endblock content %}
+    </div>
+
+
+    <!-- Footer -->
+    <div id="footer" class="bg-dark text-center text-white mt-auto media-print-d-none">
+        <div class="container p-4">
+
+            <section class="">
+                <div class="col">
+                    <p class="mb-1">Want to support Shareable Events and its developer? You can donate here:</p>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center justify-content-center">
+                                {% include 'blocks/svg/logo_PayPal.html' %}
+                                <span class="ms-2">
+                                    {% include 'blocks/PayPal/paypal_donate_button.html' %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% if 1 == 0 %}
+            <section class="">
+                <div class="row">
+                    <div class="col my-2">
+                        <h5 class="text-uppercase">Links</h5>
+                            <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 2</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="w-100 d-sm-none"></div>
+
+                    <div class="col my-2">
+                        <h5 class="text-uppercase">Links</h5>
+                            <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 2</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sticky container for Cookies and JavaScript messages -->
+    <div class="container fixed-bottom media-print-d-none">
+        {% if 'accepted_cookies' not in session %}
+        <!-- Cookie policy -->
+        <div id="cookie_policy" class="row mb-3 p-3 card border border-dark">
+            <script defer>
+                async function accepted_cookies() {
+                    // Disable the button so the user knows the website aknowledged the click.
+                    document.querySelectorAll("#cookie_policy .btn").forEach(item => {
+                        item.setAttribute("disabled", "")
+                    })
+
+                    // Call the server and ask for a new cookie to be set in the session.
+                    var x = await fetch('/accept_cookies/');
+
+                    // Remove the cookie popup.
+                    document.querySelector("#cookie_policy").remove();
+                }
+            </script>
+            <h6 class="card-title text-center display-6">Cookies</h3>
+            <div class="card-body">
+                <p class="mb-1">This website uses cookies to keep you logged in, track your theme preferences, etc. Please accept cookies to continue.</p>
+                <div class="d-grid gap-2 mt-2">
+                    <button class="btn btn-primary" onclick="accepted_cookies()">Accept Cookies</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="js_required" class="row mb-3 p-3 card bg-warning text-dark border border-dark">
+            <!-- "JavaScript Required" message -->
+            <h2 class="card-title text-center mb-0">JavaScript Required</h2>
+            <div class="card-body">
+                <p class="mb-0">JavaScript is required to use this website. In addition to other important functions, it is what converts your local time to and from a standard time zone that the server uses. Without it, posted and displayed times may be hours off from what is intended, which would cause confusion and should be avoided. Please enable JavaScript to continue.</p>
+            </div>
+            <script>
+                // Enable all elements that should be enabled with JavaScript.
+                document.querySelectorAll('.js_enable_with_js').forEach(disabled_tag => {
+                    if (disabled_tag.classList.contains('disabled')) {
+                        disabled_tag.classList.remove('disabled');
+                    }
+                    disabled_tag.classList.remove('js_enable_with_js');
+                });
+                // Remove the "JavaScript Required" popup with JavaScript.
+                document.querySelector('#js_required').remove();
+            </script>
+        </div>
+    </div>
+</body>
+</html>

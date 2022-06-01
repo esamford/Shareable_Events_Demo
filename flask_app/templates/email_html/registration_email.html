@@ -1,0 +1,15 @@
+{% extends 'email_html/email_base.html' %}
+
+
+
+{% block header_text %}Welcome, {{ first_name }}!{% endblock header_text %}
+
+{% block body %}
+<div class="mb-2">
+    <p>We're excited to have you on board! </p>
+    <p>Just to be sure that you aren't a robot, please verify your email address by clicking the button below.</p>
+</div>
+<div class="h-center">
+    <a class="btn" href="{{ verification_url }}">Verify Email Address</a>
+</div>
+{% endblock body %}

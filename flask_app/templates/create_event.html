@@ -1,0 +1,14 @@
+{% extends 'blocks/form_page_base.html' %}
+
+{% block title %}Shareable Events - Create Event{% endblock title %}
+
+
+{% block form_action %}/events/create/{% endblock form_action %}
+{% block form_title %}Create Event{% endblock form_title %}
+
+{% block form_content %}
+{% include 'forms/create_event_form_content.html' %}
+{% endblock form_content %}
+
+
+{% block page_info_container %}{% endblock page_info_container %}

@@ -1,0 +1,92 @@
+{% extends 'blocks/base.html' %}
+
+{% block title %}Shareable Events - Dashboard{% endblock title %}
+
+
+{% block content %}
+<!-- Tabs -->
+<ul class="nav nav-tabs nav-justified mb-3 media-print-d-none" id="event_tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link {% if attending_events %}active{% endif %}" id="attending_events_tab" data-mdb-toggle="tab" href="#attending_events_tab_content" role="tab" aria-controls="attending_events_tab_content" aria-selected="false">Attending</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link {% if not attending_events %}active{% endif %}" id="created_events_tab" data-mdb-toggle="tab" href="#created_events_tab_content" role="tab" aria-controls="created_events_tab_content" aria-selected="false">My Events</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="search_tab" data-mdb-toggle="tab" href="#search_tab_content" role="tab" aria-controls="search_tab_content" aria-selected="true">Search</a>
+    </li>
+</ul>
+
+<!-- Tab content -->
+<div class="tab-content" id="event_tab_content">
+    <div class="tab-pane fade show {% if attending_events %}active{% endif %}" id="attending_events_tab_content" role="tabpanel" aria-labelledby="attending_events_tab">
+        {% if attending_events %}
+        {% for event in attending_events %}
+        {% include 'blocks/event_card.html' %}
+        {% endfor %}
+        {% else %}
+        <div class="col card border border-dark p-2 mb-3">
+            <h4 class="card-title text-center my-1">No Events Being Attended</h4>
+            <div class="card-body text-center">
+                <p>You are not currently scheduled to attend any events. You can become an attendee by going to the event's page and signing up.</p>
+            </div>
+        </div>
+        <div></div>
+        {% endif %}
+    </div>
+    <div class="tab-pane fade show {% if not attending_events %}active{% endif %}" id="created_events_tab_content" role="tabpanel" aria-labelledby="created_events_tab">
+        {% if created_events %}
+        {% for event in created_events %}
+        {% include 'blocks/event_card.html' %}
+        {% endfor %}
+        {% else %}
+        <div class="col card border border-dark p-2 mb-3">
+            <h4 class="card-title text-center my-1">No Events</h4>
+            <div class="card-body text-center">
+                <p>It doesn't look like you have created an event yet.</p>
+                <div class="d-grid gap-2 mt-2">
+                    <a href="/events/create/" class="btn btn-primary">Click here to get started!</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="tab-pane fade show" id="search_tab_content" role="tabpanel" aria-labelledby="search_tab">
+        <form  class="col mb-5 card border border-dark p-2" action="/dashboard/" method="get">
+            <div class="card-body">
+                <h4>Search</h4>
+                {% include 'blocks/form_flash_messages.html' %}
+                <input id="form_timezone_offset" type="number" name="timezone_offset" hidden>
+                <div class="mb-3">
+                    <label class="form-label" for="event_start_time_local">Minimum starting date and time</label>
+                    <div class="form-outline">
+                        <input id="event_start_time_local" class="form-control" type="datetime-local" name="min_start_time" value="{% if form_data %}{{ form_data['min_start_time'] }}{% endif %}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="event_end_time_local">Maximum starting date and time</label>
+                    <div class="form-outline">
+                        <input id="event_end_time_local" class="form-control" type="datetime-local" name="max_start_time" value="{% if form_data %}{{ form_data['max_start_time'] }}{% endif %}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="max_num_search_results">Maximum number of search results</label>
+                    <div class="form-outline">
+                        <input id="max_num_search_results" class="form-control" type="number" name="max_num_results" min="1" max="50" value="{% if form_data %}{{ form_data['max_num_results'] }}{% else %}25{% endif %}" required>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="d-grid gap-2 mt-2">
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
+                    {% if form_data %}
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="/dashboard/" class="btn btn-secondary">Clear search</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

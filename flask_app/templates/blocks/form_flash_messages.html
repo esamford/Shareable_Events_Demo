@@ -1,0 +1,12 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning text-dark p-3">
+        <p class="lead">It looks like there was a problem with your submission:</p>
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+{% endwith %}

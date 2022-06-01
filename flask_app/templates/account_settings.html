@@ -1,0 +1,63 @@
+{% extends 'blocks/base.html' %}
+
+
+{% block content %}
+<h1 class="text-center mb-3">Account Settings</h1>
+{% if 1 == 0 %}
+<!--
+    Users can set an initial email address when they register, but they cannot change their email yet.
+    If I ever change my mind, I can use this form here:
+-->
+<div class="mb-3">
+    <form class="col mb-auto card border border-dark p-2 mb-3" action="/account_settings/change_email/" method="post">
+        <h4 class="card-title text-center">Change Email Address</h4>
+        <div class="card-body">
+            {% if form_data and form_data['form_type'] == "change_email" %}
+            {% include 'blocks/form_flash_messages.html' %}
+            {% endif %}
+            <input type="hidden" name="form_type" value="change_email" hidden>
+            <div class="mb-4 form-outline">
+                <input id="register_password" class="form-control" type="password" name="current_password">
+                <label class="form-label" for="register_password">Current password</label>
+            </div>
+            <div class="mb-4 form-outline">
+                <input id="edit_new_email" class="form-control" type="email" name="new_email">
+                <label class="form-label" for="edit_new_email">New email address</label>
+            </div>
+            {% include 'blocks/form_inputs/submit_button.html' %}
+        </div>
+    </form>
+</div>
+{% endif %}
+<div class="mb-3">
+    <form class="col mb-auto card border border-dark p-2 mb-3" action="/account_settings/change_password/" method="post">
+        <h4 class="card-title text-center">Change Password</h4>
+        <div class="card-body">
+            {% if form_data and form_data['form_type'] == "change_password" %}
+            {% include 'blocks/form_flash_messages.html' %}
+            {% endif %}
+            <input type="hidden" name="form_type" value="change_password" hidden>
+            <div class="mb-4 form-outline">
+                <input id="edit_password" class="form-control" type="password" name="current_password">
+                <label class="form-label" for="edit_password">Current password</label>
+            </div>
+            <div class="mb-4 form-outline">
+                <input id="edit_new_password" class="form-control" type="password" name="new_password">
+                <label class="form-label" for="edit_new_password">New password</label>
+            </div>
+            <div class="mb-4 form-outline">
+                <input id="edit_confirm_password" class="form-control" type="password" name="confirm_password">
+                <label class="form-label" for="edit_confirm_password">Confirm new password</label>
+            </div>
+            {% include 'blocks/form_inputs/submit_button.html' %}
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+
+
+
+
+
+

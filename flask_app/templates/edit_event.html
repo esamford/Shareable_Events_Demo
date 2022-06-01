@@ -1,0 +1,15 @@
+{% extends 'blocks/form_page_base.html' %}
+
+{% block title %}Shareable Events - Edit Event{% endblock title %}
+
+
+{% block form_action %}/events/update/{{ form_data['share_key'] }}/{% endblock form_action %}
+{% block form_title %}Edit Event{% endblock form_title %}
+
+{% block form_content %}
+<input class="js_convert_time_inputs_to_local" value="false" hidden></input>
+{% include 'forms/create_event_form_content.html' %}
+{% endblock form_content %}
+
+
+{% block page_info_container %}{% endblock page_info_container %}

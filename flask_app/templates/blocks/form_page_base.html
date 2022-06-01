@@ -1,0 +1,38 @@
+{% extends 'blocks/base.html' %}
+
+
+{% block content %}
+<div class="row justify-content-evenly">
+    <form class="col mb-auto card border border-dark p-2" action="{% block form_action %}{% endblock form_action %}" method="post">
+        <h2 class="card-title text-center">{% block form_title %}FORM_TITLE{% endblock form_title %}</h2>
+        <div class="card-body">
+            {% include 'blocks/form_flash_messages.html' %}
+            {% block form_content %}<p>FORM_CONTENT</p>{% endblock form_content %}
+            {% include 'blocks/form_inputs/submit_button.html' %}
+            <div class="mt-2">
+                {% block below_form_content %}{% endblock below_form_content %}
+            </div>
+        </div>
+    </form>
+
+    {% block page_info_container %}
+    <div class="d-none d-lg-block col-lg-6 ms-4">
+        {% block page_info %}
+        <!--
+            The page_info_container block can be overwritten in a child template to hide it.
+            The page_info block can be overwritten to put content on the right side of the form.
+        -->
+        <h3>Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad aspernatur consectetur cum dolorem fuga iste laborum placeat quasi quo quod? A adipisci, alias consequatur, corporis cumque dolores eaque explicabo fugit harum natus nobis praesentium repellendus sint temporibus unde! Adipisci aliquam aut culpa iste nihil nisi, numquam omnis rem repellat. Et.</p>
+        <h3 class="mt-4">Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci autem, fugit porro quaerat quia reiciendis tempora. Aperiam commodi cum impedit iusto possimus quisquam quo reiciendis. Atque aut delectus deleniti distinctio eveniet hic impedit molestiae nam, nihil non nostrum odio, officiis pariatur quam quidem quo sint? Dolorum est iure minus quo.</p>
+        <h3 class="mt-4">Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores at atque aut beatae commodi culpa cupiditate debitis deleniti deserunt eaque eos facere incidunt, modi nobis omnis, possimus qui voluptates? Ab dignissimos eius excepturi molestiae, praesentium sed veniam! Asperiores blanditiis corporis deleniti, fuga fugit iste nisi pariatur placeat repellat voluptas, voluptatibus.</p>
+        {% endblock page_info %}
+    </div>
+    {% endblock page_info_container %}
+</div>
+{% endblock content %}
+
+
+

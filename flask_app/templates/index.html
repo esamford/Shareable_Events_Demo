@@ -1,0 +1,60 @@
+{% extends 'blocks/base.html' %}
+
+{% block content %}
+<div>
+    <h1 class="display-4 text-center">Shareable Events</h1>
+    {% if num_events >= 1000 %}
+    <p class="lead text-center">Helping people organize {{ '{:,d}'.format(num_events) }} events.</p>
+    {% endif %}
+</div>
+<section class="container-fluid my-5">
+    <div class="row justify-content-between">
+        <div class="col-4 d-none d-lg-block">
+            <img class="rounded" src="{{ url_for('static', filename='images/calendars/2h-media-cdDDWLezAJ0-unsplash_(web).jpg') }}" alt="Calendar">
+        </div>
+        <div class="col">
+            <h2>Schedule an Event for Any Occasion <span class="ms-1 d-lg-none icon">{% include 'blocks/svg/calendar_heart.html' %}</span></h2>
+            <p>Whether it's for a birthday party or a week-long business trip, we can help you schedule your events in minutes. Click the "Create Event" button in the navigation bar to get started!</p>
+        </div>
+    </div>
+</section>
+
+<section class="container-fluid my-5">
+    <div class="row justify-content-between">
+        <div class="col-4 d-none d-lg-block">
+            <img class="rounded" src="{{ url_for('static', filename='images/business/giorgio-grani-Ui_RH3uDylQ-unsplash_(web).jpg') }}" alt="Office building">
+        </div>
+        <div class="col">
+            <h2>Invite Others to Your Events <span class="ms-1 d-lg-none icon">{% include 'blocks/svg/send.html' %}</span></h2>
+            <p>Sharing your events with others is as simple as copying a link and sending it to someone. They will be able to visit your event and become an attendee, letting you know to expect them.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container-fluid my-5">
+    <div class="row justify-content-between">
+        <div class="col-4 d-none d-lg-block">
+            <img class="rounded" src="{{ url_for('static', filename='images/zoom/iyus-sugiharto-Eh1xd5xDE-s-unsplash_(web).jpg') }}" alt="Zoom app">
+        </div>
+        <div class="col">
+            <h2>Work With Others Across Time Zones Easily <span class="ms-1 d-lg-none icon">{% include 'blocks/svg/globe.html' %}</span></h2>
+            <p>With Shareable Events, all events are shown in the viewer's time zone. All you have to do is create the event based on your local time, and everyone else will see it in theirs!</p>
+        </div>
+    </div>
+</section>
+
+<section class="container-fluid my-5">
+    <div class="row justify-content-between">
+        <div class="col-4 d-none d-lg-block">
+            <img class="rounded" src="{{ url_for('static', filename='images/locks/franck-DoWZMPZ-M9s-unsplash_(web).jpg') }}" alt="Phone with lock icon">
+        </div>
+        <div class="col">
+            <h2>Keep Your Events Secure <span class="ms-1 d-lg-none icon">{% include 'blocks/svg/lock.html' %}</span></h2>
+            <p>When the situation calls for it, events can be protected with a secret key -- a password or passphrase. This helps protect your event against URL guessing and unwanted guests. But keep in mind that expected guests cannot access your event without knowing this secret key, so be sure to include it in your invite messages!</p>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock content %}

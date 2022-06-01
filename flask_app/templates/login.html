@@ -1,0 +1,35 @@
+{% extends 'blocks/form_page_base.html' %}
+
+
+{% block form_action %}/login/process_form/{% endblock form_action %}
+{% block form_title %}Login{% endblock form_title %}
+
+{% block form_content %}
+<div class="mb-4 form-outline">
+    <input id="register_email" class="form-control" type="email" name="email" value="">
+    <label class="form-label" for="register_email">Email</label>
+</div>
+<div class="mb-4 form-outline">
+    <input id="register_password" class="form-control" type="password" name="password" value="">
+    <label class="form-label" for="register_password">Password</label>
+</div>
+{% endblock form_content %}
+
+{% block below_form_content %}
+<hr class="my-3">
+<small>
+    <a href="/reset_password/request_reset/">Forgot your password?</a>
+</small>
+{% endblock below_form_content %}
+
+
+
+{% block page_info %}
+    <h2 class="display-6">Welcome back!</h2>
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi quaerat esse quisquam consequuntur facilis, eveniet odio explicabo assumenda ut ea enim! Eius perspiciatis ad voluptas expedita earum atque iusto placeat exercitationem, recusandae laudantium non corporis officiis facilis velit ipsum quibusdam quod sapiente saepe architecto reiciendis adipisci, necessitatibus rem? Mollitia, fugit.</p>
+    <h2 class="display-6 mt-4">Don't have an account yet?</h2>
+    <p>Click <a href="/register/" class="fw-bold text-decoration-underline text-white">here</a> to go to our sign up page instead!</p>
+{% endblock page_info %}
+
+<!-- Hide the text at the side. -->
+{% block page_info_container %}{% endblock page_info_container %}

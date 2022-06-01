@@ -1,0 +1,94 @@
+
+<div class="mb-3 form-outline">
+    <input id="event_name" class="form-control" type="text" value="{% if form_data %}{{ form_data['name'] }}{% endif %}"
+    {% if on_edit_page %}
+    disabled
+    {% else %}
+    required
+    name="name"
+    {% endif %}
+    >
+    {% if on_edit_page %}
+    <label class="form-label" for="event_name">Event Name (cannot be edited)</label>
+    {% else %}
+    <label class="form-label" for="event_name">Event Name</label>
+    {% endif %}
+</div>
+
+<input type="number" name="timezone_offset" hidden>
+<div class="row">
+    <div class="col mb-5">
+        <label class="form-label" for="event_start_time_local">Start date and time</label>
+        <div class="form-outline">
+            <input id="event_start_time_local" class="form-control" type="datetime-local" name="start_time" value="{% if form_data %}{{ form_data['start_time'] }}{% endif %}" required>
+            <div class="form-helper">Enter in "mm/dd/yyyy hour:minute AM/PM" format and in your time zone.</div>
+        </div>
+    </div>
+    <div class="w-100 d-lg-none"></div>
+    <div class="col mb-5">
+        <label class="form-label" for="event_end_time_local">End date and time</label>
+        <div class="form-outline">
+            <input id="event_end_time_local" class="form-control" type="datetime-local" name="end_time" value="{% if form_data %}{{ form_data['end_time'] }}{% endif %}" required>
+            <div class="form-helper">Enter in "mm/dd/yyyy hour:minute AM/PM" format and in your time zone.</div>
+        </div>
+    </div>
+</div>
+<div class="mb-4 form-outline">
+    <textarea id="event_description" class="form-control" rows="5" name="description" data-mdb-showcounter="true" maxlength="1000" placeholder="Use this field to describe and add relevant information about the event.">{% if form_data %}{{ form_data['description'] }}{% endif %}</textarea>
+    <label class="form-label" for="event_description">Event description</label>
+    <div class="form-helper"></div>
+</div>
+
+<!-- Location inputs -->
+<div class="form-check mb-4 ms-1">
+    <input id="form_show_location_inputs" class="form-check-input" type="checkbox" name="checkbox_add_location_data" onchange="change_enable_status_of_inputs_in_group(this, '#form_location_group')"
+    {% if form_data and 'checkbox_add_location_data' in form_data %}
+    checked
+    {% endif %}
+    >
+    <label class="form-check-label" for="form_show_location_inputs">Event is located at a physical address.</label>
+</div>
+<div id="form_location_group">
+    <div class="mb-4 form-outline">
+        <input id="event_street" class="form-control" type="text" name="street" value="{% if form_data %}{{ form_data['street'] }}{% endif %}" required>
+        <label class="form-label" for="event_street">Street</label>
+    </div>
+    <div class="mb-4 form-outline">
+        <input id="event_city" class="form-control" type="text" name="city" value="{% if form_data %}{{ form_data['city'] }}{% endif %}" required>
+        <label class="form-label" for="event_city">City</label>
+    </div>
+    <div class="mb-4 form-outline">
+        <input id="event_state" class="form-control" type="text" name="state" value="{% if form_data %}{{ form_data['state'] }}{% endif %}" required>
+        <label class="form-label" for="event_state">State</label>
+    </div>
+    <div class="mb-4 form-outline">
+        <input id="event_country" class="form-control" type="text" name="country" value="{% if form_data %}{{ form_data['country'] }}{% endif %}" required>
+        <label class="form-label" for="event_country">Country</label>
+    </div>
+    <div class="mb-4 form-outline">
+        <input id="event_postal_code" class="form-control" type="text" name="postal_code" value="{% if form_data %}{{ form_data['postal_code'] }}{% endif %}" required>
+        <label class="form-label" for="event_postal_code">Postal code</label>
+    </div>
+    <div class="mb-4 form-outline">
+        <textarea id="event_location_notes" class="form-control" rows="5" name="notes" data-mdb-showcounter="true" maxlength="1000" placeholder="Great for specifying room numbers, driving directions, etcetera.">{% if form_data %}{{ form_data['notes'] }}{% endif %}</textarea>
+        <label class="form-label" for="event_location_notes">Location notes</label>
+        <div class="form-helper"></div>
+    </div>
+</div>
+
+<!-- Event secret key inputs -->
+<div class="form-check mb-4 ms-1">
+    <input id="form_show_private_event_inputs" class="form-check-input" type="checkbox" name="checkbox_add_private_event_key" onchange="change_enable_status_of_inputs_in_group(this, '#form_event_password_group')"
+    {% if form_data and 'checkbox_add_private_event_key' in form_data %}
+    checked
+    {% endif %}
+    >
+    <label class="form-check-label" for="form_show_private_event_inputs">Event requires a secret key to access.</label>
+</div>
+<div id="form_event_password_group">
+    <div class="mb-4 form-outline">
+        <input id="event_secret_key" class="form-control" type="text" name="secret_key" value="{% if form_data %}{{ form_data['secret_key'] }}{% endif %}" data-mdb-showcounter="true" maxlength="50" placeholder="Enter secret text you can share." required>
+        <label class="form-label" for="event_secret_key">Secret event key</label>
+        <div class="form-helper"></div>
+    </div>
+</div>

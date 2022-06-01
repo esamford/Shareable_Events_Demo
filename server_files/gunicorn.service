@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/Shareable_Events
+Environment="PATH=/home/ubuntu/Shareable_Events/venv/bin"
+ExecStart=/home/ubuntu/Shareable_Events/venv/bin/gunicorn --workers 3 --bind unix:flask_app.sock -m 007 wsgi:application
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+user-agent: *
+allow: /
+disallow: /reset_password/
+disallow: /account_settings/
+disallow: /attendance/
+disallow: /accept_cookies/
+disallow: /event_comments/
+disallow: /events/view/
+sitemap: https://www.shareableevents.com/sitemap.txt

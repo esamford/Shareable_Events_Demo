@@ -1,0 +1,8 @@
+server {
+    listen 80;
+    server_name www.shareableevents.com;
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/Shareable_Events/flask_app.sock;
+    }
+}

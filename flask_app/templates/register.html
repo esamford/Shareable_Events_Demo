@@ -1,0 +1,42 @@
+{% extends 'blocks/form_page_base.html' %}
+
+
+{% block form_action %}/register/new/{% endblock form_action %}
+{% block form_title %}Sign Up{% endblock form_title %}
+
+{% block form_content %}
+<div class="mb-4 form-outline">
+    <input id="register_email" class="form-control" type="email" name="email" value="{% if form_data %}{{ form_data['email'] }}{% endif %}">
+    <label class="form-label" for="register_email">Email</label>
+</div>
+<div class="mb-4 form-outline">
+    <input id="register_first_name" class="form-control" type="text" name="first_name" value="{% if form_data %}{{ form_data['first_name'] }}{% endif %}">
+    <label class="form-label" for="register_first_name">First name</label>
+</div>
+<div class="mb-4 form-outline">
+    <input id="register_last_name" class="form-control" type="text" name="last_name" value="{% if form_data %}{{ form_data['last_name'] }}{% endif %}">
+    <label class="form-label" for="register_last_name">Last name</label>
+</div>
+<div class="mb-4 form-outline">
+    <input id="register_password" class="form-control" type="password" name="password">
+    <label class="form-label" for="register_password">Password</label>
+</div>
+<div class="mb-4 form-outline">
+    <input id="register_confirm_password" class="form-control" type="password" name="confirm_password">
+    <label class="form-label" for="register_confirm_password">Confirm password</label>
+</div>
+{% endblock form_content %}
+
+
+{% block page_info %}
+<h2 class="display-6">Welcome!</h2>
+<p>Get ready to make scheduling events a breeze! Start creating, editing, and sharing events with others in minutes.</p>
+<h2 class="display-6 mt-4">Don’t Need an Account?</h2>
+<p>If you are just taking a quick look around, that's okay! Non-registered users are free to create and share as many events as they would like, without needing to log in. Just click the "Create Event" link in the navigation bar at the top to get started!</p>
+<p class="mb-1">However, there are additional features only available to registered users:</p>
+<ul>
+    <li>Track all of your events through the user dashboard.</li>
+    <li>If necessary, cancel events that are no longer scheduled to happen.</li>
+    <li>Communicate with other event attendees through the event's comment area.</li>
+</ul>
+{% endblock page_info %}

@@ -1,0 +1,16 @@
+# Prevent wheel-related issues during future installations
+wheel==0.37.1
+
+# Flask application imports
+flask==2.0.3
+pymysql==1.0.2
+flask_bcrypt==0.7.1
+
+# Used for validating email addresses.
+validators==0.18.2
+
+
+
+
+
+
